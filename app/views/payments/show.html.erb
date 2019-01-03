@@ -1,6 +1,7 @@
 <p id="notice"><%= notice %></p>
 
 Token: <%= @payment.stripe_token %>
+Stripe Charge Id: <%= @payment.stripe_charge_id %>
 
 <%= link_to 'Edit', edit_payment_path(@payment) %> |
 <%= link_to 'Back', payments_path %>

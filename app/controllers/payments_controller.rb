@@ -22,6 +22,18 @@ class PaymentsController < ApplicationController
   def create
     @payment = Payment.new(stripe_token: payment_params[:stripeToken])
 
+    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
+    charge = Stripe::Charge.create(
+      :amount => 1200,
+      :currency => "usd",
+      :source => @payment.stripe_token,
+      :metadata => {'order_id' => '6735'},
+      :description => "Whatever I created for..."
+    )
+
+    @payment.stripe_charge_id = charge["id"]
+    @payment.save
+
     respond_to do |format|
       if @payment.save
         format.html { redirect_to @payment, notice: 'Payment was successfully created.' }
