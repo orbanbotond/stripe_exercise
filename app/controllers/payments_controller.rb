@@ -20,7 +20,6 @@ class PaymentsController < ApplicationController
   # POST /payments
   # POST /payments.json
   def create
-    binding.pry
     @payment = Payment.new(stripe_token: payment_params[:stripeToken])
 
     respond_to do |format|
