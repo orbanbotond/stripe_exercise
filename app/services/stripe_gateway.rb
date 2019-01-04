@@ -23,4 +23,19 @@ class StripeGateway
   def refunds()
     Stripe::Refund.list(limit: 3)
   end
+
+  def retrieveToken(id)
+    Stripe::Token.retrieve(id)
+  end
+
+  def createToken(cardNumber, exp_month, exp_year, cvc)
+    Stripe::Token.create(
+        :card => {
+          :number => cardNumber,
+          :exp_month => exp_month,
+          :exp_year => exp_year,
+          :cvc => cvc
+        },
+    )
+  end
 end
