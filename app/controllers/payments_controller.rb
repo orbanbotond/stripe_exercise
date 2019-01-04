@@ -1,5 +1,5 @@
 class PaymentsController < ApplicationController
-  before_action :set_payment, only: [:show, :edit, :update, :destroy]
+  before_action :set_payment, only: [:show, :refund, :update]
 
   # GET /payments
   # GET /payments.json
@@ -17,19 +17,26 @@ class PaymentsController < ApplicationController
     @payment = Payment.new
   end
 
+  # PUT /payments/refund
+  def refund
+    if @payment.refundable?
+      refund = StripeGateway.new.refund(@payment.stripe_charge_id)
+      @payment.refund_id = refund["id"]
+      @payment.save
+    end
+
+    render :show
+  end
+
   # POST /payments
   # POST /payments.json
   def create
     @payment = Payment.new(stripe_token: payment_params[:stripeToken])
 
-    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    charge = Stripe::Charge.create(
-      :amount => 1200,
-      :currency => "usd",
-      :source => @payment.stripe_token,
-      :metadata => {'order_id' => '6735'},
-      :description => "Whatever I created for..."
-    )
+    charge = StripeGateway.new.charge(@payment.stripe_token, 
+                                  1200, 
+                                  {'order_id' => '6735'},
+                                  "Whatever I created for...")
 
     @payment.stripe_charge_id = charge["id"]
     @payment.save

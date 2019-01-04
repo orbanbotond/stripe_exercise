@@ -1,7 +1,21 @@
 <p id="notice"><%= notice %></p>
 
-Token: <%= @payment.stripe_token %>
-Stripe Charge Id: <%= @payment.stripe_charge_id %>
+<p>
+Refunded: <%= @payment.refunded? %>
+<br />
+Refundable: <%= @payment.refundable? %>
+</p>
 
-<%= link_to 'Edit', edit_payment_path(@payment) %> |
+<p>
+Card Token: <%= @payment.stripe_token %>
+<br />
+Charge Id: <%= @payment.stripe_charge_id %>
+<br />
+Stripe Refund Id: <%= @payment.refund_id %>
+</p>
+
+<% if @payment.refundable? %>
+  <%= link_to 'Refund', refund_payment_path(@payment), method: :put %> |
+<% end %>
+
 <%= link_to 'Back', payments_path %>
